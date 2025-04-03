@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
         processes = []
         try:
-            for _ in range(60):
+            for _ in range(1000):
                 p = multiprocessing.Process(target=ping_loop, args=(ip, ping_command))
                 p.start()
                 processes.append(p)
