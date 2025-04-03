@@ -31,10 +31,19 @@ def ip_exists(ip):
     except requests.RequestException:
         return False
 
+def is_vpn(ip):
+    try:
+        url = f"http://ip-api.com/json/{ip}"
+        response = requests.get(url, timeout=5)
+        data = response.json()
+        return data.get("proxy") == True
+    except requests.RequestException:
+        return False
+
 def get_existing_ip(max_attempts=100):
     for _ in range(max_attempts):
         ip = random_ip()
-        if is_public_ip(ip) and ip_exists(ip):
+        if is_public_ip(ip) and ip_exists(ip) and not is_vpn(ip):
             return ip
     return None
 
