@@ -24,34 +24,19 @@ def ping_ip(ip):
 def random_ip():
     return str(IPv4Address(random.randint(0, 2**32 - 1)))
 
-def get_working_ips(max_attempts=1000, max_working_ips=10):
-    working_ips = []
-    attempts = 0
-    while len(working_ips) < max_working_ips and attempts < max_attempts:
-        ip = random_ip()
-        if ping_ip(ip):
-            working_ips.append(ip)
-        attempts += 1
-    return working_ips
+def monitor_ip(ip):
+    if not ping_ip(ip):
+        print(f"IP {ip} is down!")
+    else:
+        print(f"IP {ip} is up.")
 
 if __name__ == "__main__":
-    working_ips = get_working_ips()
+    try:
+        while True:
+            ip = random_ip()
+            monitor_ip(ip)
+            time.sleep(1)  # Adjust the sleep duration as needed
 
-    if not working_ips:
-        print("No responsive IPs found after multiple attempts. Exiting.")
-        sys.exit(1)
-    else:
-        print(f"Responsive IPs found: {working_ips}")
-
-        try:
-            while True:
-                for ip in working_ips:
-                    if not ping_ip(ip):
-                        print(f"IP {ip} is down!")
-                    else:
-                        print(f"IP {ip} is up.")
-                time.sleep(5)
-
-        except KeyboardInterrupt:
-            print("\nExiting... Monitoring stopped.")
-            sys.exit(0)
+    except KeyboardInterrupt:
+        print("\nExiting... Monitoring stopped.")
+        sys.exit(0)
